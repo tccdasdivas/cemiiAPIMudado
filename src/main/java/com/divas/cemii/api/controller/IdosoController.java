@@ -49,32 +49,9 @@ public class IdosoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> adicionar(
-            @RequestBody Idoso idoso,
-            @RequestHeader("Authorization") String header
-    ) {
-        try {
-            String email = tokenService.validateToken(tokenService.recoverToken(header));
-
-            Usuario responsavel = usuarioRepository.findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("Responsável não encontrado."));
-
-            if (!"RESPONSAVEL".equalsIgnoreCase(responsavel.getTipo())) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                        .body("Apenas usuários do tipo RESPONSAVEL podem cadastrar idosos.");
-            }
-
-            idoso.setResponsavel(responsavel);
-
-            Idoso salvo = idosoService.salvar(idoso);
-            return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Erro ao cadastrar idoso: " + e.getMessage());
-        }
+    public Idoso adicionar(@RequestBody Idoso idoso){
+        return idosoService.salvar(idoso);
     }
-
 
     public ResponseEntity<Idoso> verificar(@RequestBody Idoso idoso) {
         Idoso salvo = idosoService.verificar(idoso.getNascimento());
