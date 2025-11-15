@@ -62,8 +62,8 @@ public class IdosoController {
     public ResponseEntity<Idoso> atualizar(@PathVariable Long idosoId, @RequestBody Idoso idoso){
         Optional <Idoso> idosoAtual = idosoRepository.findById(idosoId);
 
-        if (idosoAtual != null){
-            BeanUtils.copyProperties(idoso, idosoAtual, "id");
+        if (idosoAtual.isPresent()){
+            BeanUtils.copyProperties(idoso, idosoAtual.get(), "id");
 
             Idoso idosoSalva = idosoService.salvar(idosoAtual.get());
             return ResponseEntity.ok(idosoSalva);

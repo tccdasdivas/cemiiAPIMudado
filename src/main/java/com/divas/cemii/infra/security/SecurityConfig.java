@@ -45,6 +45,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/usuarios/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/idosos/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/idosos").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/usuarios").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/usuarios/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/idosos/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/idosos").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/auth/verificar-email").permitAll()
                         .requestMatchers("/ibge/**").permitAll() // <-- ADICIONE ESTA LINHA
 
@@ -69,14 +76,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(
-                "http://localhost:5173",
-                "http://127.0.0.1:5173",
-                "http://10.0.2.2:8080",
-                "http://192.168.1.2:8080",
-                "http://192.168.1.5:8080",
-                "http://192.168.56.1:8080"
-        ));
+        configuration.setAllowedOrigins(List.of("*"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
