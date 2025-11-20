@@ -82,6 +82,8 @@ public class AuthController {
         novoUsuario.setParentesco(body.parentesco());
         novoUsuario.setProfissao(body.profissao());
         novoUsuario.setCoren(body.coren());
+        novoUsuario.setDiasHorarios(body.diasHorarios());
+        novoUsuario.setExperiencia(body.experiencia());
         novoUsuario.setCidade(body.cidade()); // importante: verificar se a entidade Cidade está correta
 
         if (body.tipo() == null || body.tipo().isBlank()) {

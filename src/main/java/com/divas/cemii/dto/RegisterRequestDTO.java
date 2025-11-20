@@ -21,6 +21,8 @@ public record RegisterRequestDTO(
         String numero,
         String necessidade,
         String tipo,
+        String experiencia,
+        String diasHorarios,
 
         Usuario responsavel
 

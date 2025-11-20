@@ -63,4 +63,10 @@ public class Usuario {
 
     @OneToMany(mappedBy = "responsavel", cascade = CascadeType.ALL)
     private List<Idoso> idosos;
+
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String diasHorarios;
+
+    private String experiencia;
 }
