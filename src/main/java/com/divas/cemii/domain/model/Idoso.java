@@ -41,7 +41,7 @@ public class Idoso {
 
     private String numero;
 
-    @Column(name = "data_nascimento", columnDefinition = "datetime")
+    @Column(name = "nascimento", columnDefinition = "datetime")
     private LocalDate nascimento;
 
     @ManyToOne
