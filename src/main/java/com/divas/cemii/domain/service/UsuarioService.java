@@ -31,20 +31,33 @@ public class UsuarioService {
     @Transactional
     public Usuario salvar(Usuario usuario) {
         try {
+
+            // Se for UPDATE (ID existe), busca o usuário atual para recuperar a cidade
+            if (usuario.getId() != null) {
+                Usuario usuarioAtual = usuarioRepository.findById(usuario.getId())
+                        .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado para atualização."));
+
+                // Se a cidade NÃO foi enviada no PUT, mantém a cidade atual
+                if (usuario.getCidade() == null) {
+                    usuario.setCidade(usuarioAtual.getCidade());
+                }
+            }
+
+            // Se a cidade ainda estiver vazia → é um cadastro novo → cidade é obrigatória
             if (usuario.getCidade() == null) {
                 throw new IllegalArgumentException("Cidade é obrigatória para o cadastro do usuário.");
             }
 
             Cidade cidadeFinal;
 
-            // ✅ Caso venha o ID da cidade (selecionada do dropdown)
+            // Caso venha o ID da cidade
             if (usuario.getCidade().getId() != null) {
                 cidadeFinal = cidadeRepository.findById(usuario.getCidade().getId())
                         .orElseThrow(() -> new EntidadeNaoEncontradaException(
                                 "Cidade com ID " + usuario.getCidade().getId() + " não encontrada."
                         ));
             }
-            // ✅ Caso venha nome e sigla do estado (via IBGE)
+            // Caso venha nome + estado
             else if (usuario.getCidade().getNome() != null && usuario.getCidade().getEstado() != null) {
                 String nomeCidade = usuario.getCidade().getNome();
                 String siglaEstado = usuario.getCidade().getEstado().getSigla();
@@ -53,7 +66,7 @@ public class UsuarioService {
                         .findByNomeAndEstado_SiglaIgnoreCase(nomeCidade, siglaEstado)
                         .orElseGet(() -> ibgeImportService.importarCidade(nomeCidade, siglaEstado));
             }
-            // ❌ Nenhuma informação válida de cidade
+            // Nenhuma info válida
             else {
                 throw new IllegalArgumentException("Dados de cidade inválidos ou incompletos.");
             }

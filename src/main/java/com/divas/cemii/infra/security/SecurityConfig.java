@@ -38,37 +38,37 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 // 🔐 Define regras de autorização
                 .authorizeHttpRequests(auth -> auth
-                        // Endpoints públicos
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuarios/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/idosos/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/idosos").permitAll()
+
                         .requestMatchers(HttpMethod.GET, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/auth/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/usuarios").permitAll()
                         .requestMatchers(HttpMethod.GET, "/usuarios/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/idosos/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/idosos").permitAll()
+
+                        // 📌 LIBERAR PUT PARA USUÁRIO LOGADO
+                        .requestMatchers(HttpMethod.PUT, "/usuarios/**").permitAll()
+
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/auth/verificar-email").permitAll()
-                        .requestMatchers("/ibge/**").permitAll() // <-- ADICIONE ESTA LINHA
-
-                        // Libera endpoints públicos adicionais
+                        .requestMatchers("/ibge/**").permitAll()
                         .requestMatchers("/api/chat/**").permitAll()
                         .requestMatchers("/tipos-usuario/**").permitAll()
-
-                        // Exemplo: liberar Swagger (se usar)
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
-                        // Tudo o mais requer autenticação
                         .anyRequest().authenticated()
                 )
                 // 🔄 Define política de sessão sem estado (JWT)
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 🔑 Adiciona filtro JWT antes do filtro padrão
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+                .userDetailsService(userDetailsService)
                 .build();
     }
 

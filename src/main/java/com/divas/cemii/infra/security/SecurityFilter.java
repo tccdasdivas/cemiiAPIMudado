@@ -47,8 +47,18 @@ public class SecurityFilter extends OncePerRequestFilter {
                     // Define uma role padrão para todos os usuários
                     var authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
 
-                    var authentication =
-                            new UsernamePasswordAuthenticationToken(usuario, null, authorities);
+                    var userDetails = new CustomUserDetails(
+                            usuario.getId(),
+                            usuario.getEmail(),
+                            usuario.getSenha(),
+                            authorities
+                    );
+
+                    var authentication = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }

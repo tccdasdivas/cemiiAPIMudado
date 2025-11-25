@@ -1,9 +1,12 @@
 package com.divas.cemii.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -62,6 +65,7 @@ public class Usuario {
     private String tipo;
 
     @OneToMany(mappedBy = "responsavel", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Idoso> idosos;
 
     @Lob

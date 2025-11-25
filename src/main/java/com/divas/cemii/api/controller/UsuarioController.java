@@ -27,7 +27,16 @@ public class UsuarioController {
     // ✅ LISTAR TODOS OS USUÁRIOS
     @GetMapping
     public List<Usuario> listar() {
-        return usuarioRepository.findAll();
+        List<Usuario> usuarios = usuarioRepository.findAll();
+
+        // Evita duplicação: cuidadores não enviam idosos
+        usuarios.forEach(u -> {
+            if (!"responsavel".equalsIgnoreCase(u.getTipo())) {
+                u.setIdosos(null); // cuidadores não enviam lista de idosos
+            }
+        });
+
+        return usuarios;
     }
 
     // ✅ BUSCAR USUÁRIO POR ID
@@ -54,9 +63,23 @@ public class UsuarioController {
         Optional<Usuario> usuarioAtual = usuarioRepository.findById(usuarioId);
 
         if (usuarioAtual.isPresent()) {
-            BeanUtils.copyProperties(usuario, usuarioAtual.get(), "id");
+            Usuario u = usuarioAtual.get();
 
-            Usuario usuarioSalvo = usuarioService.salvar(usuarioAtual.get());
+            // Atualiza apenas os campos que podem ser modificados
+            u.setNome(usuario.getNome());
+            u.setEmail(usuario.getEmail());
+            u.setTelefone(usuario.getTelefone());
+            u.setProfissao(usuario.getProfissao());
+            u.setCidade(usuario.getCidade());
+            u.setNascimento(usuario.getNascimento());
+            u.setTipo(usuario.getTipo());
+
+            // Só atualiza a senha se tiver sido enviada
+            if (usuario.getSenha() != null && !usuario.getSenha().isEmpty()) {
+                u.setSenha(usuario.getSenha());
+            }
+
+            Usuario usuarioSalvo = usuarioService.salvar(u);
             return ResponseEntity.ok(usuarioSalvo);
         }
         return ResponseEntity.notFound().build();
