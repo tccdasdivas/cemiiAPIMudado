@@ -57,12 +57,6 @@ public class Usuario {
 
     private String coren;
 
-    private String logradouro;
-
-    private String numero;
-
-    private String necessidade;
-
     @Column(nullable = false)
     private String tipo;
 
