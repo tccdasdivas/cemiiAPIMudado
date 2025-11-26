@@ -11,7 +11,6 @@ public record RegisterRequestDTO(
         String password,
         String telefone,
         String cpf,
-        String foto,
         LocalDate nascimento,
         String parentesco,
         String profissao,

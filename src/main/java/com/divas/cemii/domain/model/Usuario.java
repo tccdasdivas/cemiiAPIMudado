@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.sql.Blob;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -33,8 +34,9 @@ public class Usuario {
     //@NotBlank(message = "Este campo é obrigatório")
     private String cpf;
 
-    //@NotBlank(message = "Este campo é obrigatório")
-    private String foto;
+    @Lob
+    @Column(columnDefinition = "LONGBLOB")
+    private byte[] foto;
 
     //@NotBlank(message = "Este campo é obrigatório")
     private String parentesco;
