@@ -3,6 +3,7 @@ package com.divas.cemii.dto;
 import com.divas.cemii.domain.model.Cidade;
 import com.divas.cemii.domain.model.Usuario;
 
+import java.sql.Blob;
 import java.time.LocalDate;
 
 public record RegisterRequestDTO(
@@ -22,6 +23,7 @@ public record RegisterRequestDTO(
         String tipo,
         String experiencia,
         String diasHorarios,
+        String foto,
 
         Usuario responsavel
 

@@ -9,4 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface IdosoRepository extends JpaRepository<Idoso, Long> {
+    Optional<Usuario> findByCpf(String cpf);
+    Optional<Usuario> findByNome(String nome);
+    boolean existsByCpf(String cpf);
 }

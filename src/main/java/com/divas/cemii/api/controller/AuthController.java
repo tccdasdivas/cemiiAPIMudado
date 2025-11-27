@@ -10,6 +10,7 @@ import com.divas.cemii.dto.LoginRequestDTO;
 import com.divas.cemii.dto.RegisterRequestDTO;
 import com.divas.cemii.dto.ResponseDTO;
 import com.divas.cemii.infra.security.TokenService;
+import jdk.internal.icu.lang.UCharacterDirection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,7 +18,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.Buffer;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.Base64;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*")
@@ -68,78 +72,43 @@ public class AuthController {
         );
     }
 
-    @PostMapping(value = "/register", consumes = {"multipart/form-data"})
-    public ResponseEntity<?> register(
-            @RequestParam String name,
-            @RequestParam String email,
-            @RequestParam String password,
-            @RequestParam String telefone,
-            @RequestParam String cpf,
-            @RequestParam String nascimento,
-            @RequestParam String profissao,
-            @RequestParam(required = false) String coren,
-            @RequestParam String diasHorarios,
-            @RequestParam(required = false) String experiencia,
-            @RequestParam String tipo,
-            @RequestParam("cidade[id]") Long cidadeId,
-            @RequestParam("cidade[nome]") String cidadeNome,
-            @RequestParam("cidade[estado][id]") Long estadoId,
-            @RequestParam("cidade[estado][nome]") String estadoNome,
-            @RequestParam("cidade[estado][sigla]") String estadoSigla,
-            @RequestPart(required = false) MultipartFile foto
-    ) throws IOException {
-
-        // Valida campos obrigatórios
-        if (name.isBlank() || email.isBlank() || password.isBlank() || telefone.isBlank() ||
-                cpf.isBlank() || nascimento.isBlank() || profissao.isBlank() ||
-                diasHorarios.isBlank() || tipo.isBlank()) {
-            return ResponseEntity.badRequest().body("Todos os campos obrigatórios devem ser preenchidos.");
-        }
-
-        // Verifica se email já existe
-        Optional<Usuario> usuarioExistente = usuarioRepository.findByEmail(email);
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody RegisterRequestDTO body) {
+        Optional<Usuario> usuarioExistente = usuarioRepository.findByEmail(body.email());
         if (usuarioExistente.isPresent()) {
             return ResponseEntity.status(409).body("Email já cadastrado");
         }
 
-        // Cria novo usuário
         Usuario novoUsuario = new Usuario();
-        novoUsuario.setNome(name);
-        novoUsuario.setEmail(email);
-        novoUsuario.setSenha(passwordEncoder.encode(password));
-        novoUsuario.setTelefone(telefone);
-        novoUsuario.setCpf(cpf);
-        novoUsuario.setNascimento(LocalDate.parse(nascimento));
-        novoUsuario.setProfissao(profissao);
-        novoUsuario.setCoren(coren);
-        novoUsuario.setDiasHorarios(diasHorarios);
-        novoUsuario.setExperiencia(experiencia);
-        novoUsuario.setTipo(tipo.toUpperCase());
-
-        // Configura cidade e estado
-        Estado estado = new Estado();
-        estado.setId(estadoId);
-        estado.setNome(estadoNome);
-        estado.setSigla(estadoSigla);
-
-        Cidade cidade = new Cidade();
-        cidade.setId(cidadeId);
-        cidade.setNome(cidadeNome);
-        cidade.setEstado(estado);
-
-        novoUsuario.setCidade(cidade);
-
-        // Configura foto
-        if (foto != null && !foto.isEmpty()) {
-            novoUsuario.setFoto(foto.getBytes());
+        novoUsuario.setNome(body.name());
+        novoUsuario.setEmail(body.email());
+        novoUsuario.setSenha(passwordEncoder.encode(body.password()));
+        novoUsuario.setTelefone(body.telefone());
+        novoUsuario.setCpf(body.cpf());
+        if (body.foto() != null && !body.foto().isBlank()) {
+            try {
+                byte[] fotoBytes = Base64.getDecoder().decode(body.foto());
+                novoUsuario.setFoto(fotoBytes);
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().body("Base64 inválido para a foto.");
+            }
         }
+        novoUsuario.setNascimento(body.nascimento());
+        novoUsuario.setParentesco(body.parentesco());
+        novoUsuario.setProfissao(body.profissao());
+        novoUsuario.setCoren(body.coren());
+        novoUsuario.setDiasHorarios(body.diasHorarios());
+        novoUsuario.setExperiencia(body.experiencia());
+        novoUsuario.setCidade(body.cidade()); // importante: verificar se a entidade Cidade está correta
 
-        // Salva no banco
+        if (body.tipo() == null || body.tipo().isBlank()) {
+            return ResponseEntity.badRequest().body("Campo 'tipo' é obrigatório (RESPONSAVEL ou CUIDADOR).");
+        }
+        novoUsuario.setTipo(body.tipo().toUpperCase());
+
         usuarioRepository.save(novoUsuario);
 
-        // Gera token
         String token = tokenService.generateToken(novoUsuario);
-
         return ResponseEntity.ok(
                 new ResponseDTO(novoUsuario.getId(), novoUsuario.getNome(), token, novoUsuario.getEmail(), novoUsuario.getTipo())
         );
