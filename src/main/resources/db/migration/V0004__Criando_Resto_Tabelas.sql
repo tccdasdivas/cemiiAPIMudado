@@ -1,6 +1,9 @@
 create table tb_mensagem(
 id bigint not null auto_increment,
 mensagem varchar(255),
+usuario_mandou bigint not null,
+usuario_recebeu bigint not null,
+horaioenvio datetime,
 
 primary key (id)
 ) engine=InnoDB default charset=utf8;

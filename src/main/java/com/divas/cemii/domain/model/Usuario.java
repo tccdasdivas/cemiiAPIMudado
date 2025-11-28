@@ -52,7 +52,7 @@ public class Usuario {
     private String senha;
 
     //@NotBlank(message = "Este campo é obrigatório")
-    @Column(name = "data_nascimento", columnDefinition = "datetime")
+    @Column(name = "nascimento", columnDefinition = "datetime")
     private LocalDate nascimento;
 
     private String coren;

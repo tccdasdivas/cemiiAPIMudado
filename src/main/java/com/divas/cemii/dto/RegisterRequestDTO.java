@@ -15,16 +15,12 @@ public record RegisterRequestDTO(
         LocalDate nascimento,
         String parentesco,
         String profissao,
-        Cidade cidade,
+        CidadeDTO cidade,
         String coren,
-        String logradouro,
-        String numero,
-        String necessidade,
         String tipo,
         String experiencia,
         String diasHorarios,
-        String foto,
+        String foto
 
-        Usuario responsavel
 
 ) {}

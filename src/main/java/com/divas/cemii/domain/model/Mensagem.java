@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.time.LocalDate;
+
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
@@ -15,4 +17,16 @@ public class Mensagem {
     private Long id;
 
     private String mensagem;
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_recebeu")
+    private Usuario usuarioRecebeu;
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_mandou")
+    private Usuario usuarioMandou;
+
+
+    @Column(name = "horarioenvio", columnDefinition = "datetime")
+    private LocalDate horarioEnvio;
 }

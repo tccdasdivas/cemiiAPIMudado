@@ -27,10 +27,12 @@ public class Idoso {
 
     private String cpf;
 
+
+    private String fotoBase64;
+
     @Lob
     @Column(columnDefinition = "LONGBLOB")
     private byte[] foto;
-
 
     private String necessidade;
 
@@ -46,7 +48,7 @@ public class Idoso {
     private LocalDate nascimento;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "responsavel_id")
     private Usuario responsavel;
 
 }

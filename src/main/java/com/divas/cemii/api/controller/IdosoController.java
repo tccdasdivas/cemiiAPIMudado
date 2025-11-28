@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +37,7 @@ public class IdosoController {
     public List<Idoso> listar(){
         return idosoRepository.findAll();
     }
-    
+
     @GetMapping("/{idosoId}")
     public ResponseEntity<Idoso> buscar(@PathVariable Long idosoId){
         Optional <Idoso> idoso = idosoRepository.findById(idosoId);
@@ -50,6 +51,16 @@ public class IdosoController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Idoso adicionar(@RequestBody Idoso idoso){
+        if (idoso.getFotoBase64() != null && !idoso.getFotoBase64().isBlank()) {
+            try {
+                byte[] fotoBytes = Base64.getDecoder().decode(idoso.getFotoBase64());
+                idoso.setFotoBase64(null);
+                idoso.setFoto(fotoBytes);
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException("Base64 inválido para a foto.");
+            }
+        }
+
         return idosoService.salvar(idoso);
     }
 
