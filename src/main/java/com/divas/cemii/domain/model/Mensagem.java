@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -28,5 +29,5 @@ public class Mensagem {
 
 
     @Column(name = "horarioenvio", columnDefinition = "datetime")
-    private LocalDate horarioEnvio;
+    private LocalDateTime horarioEnvio;
 }

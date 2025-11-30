@@ -8,6 +8,7 @@ cidade_id bigint not null,
 nascimento date not null,
 foto varchar(255),
 logradouro varchar(255),
+bairro varchar(255),
 numero varchar(20),
 
 primary key (id)

@@ -62,6 +62,10 @@ public class SecurityConfig {
                         .requestMatchers("/tipos-usuario/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
+                        .requestMatchers(HttpMethod.POST, "/mensagens").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/mensagens/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/mensagens/conversa").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 // 🔄 Define política de sessão sem estado (JWT)

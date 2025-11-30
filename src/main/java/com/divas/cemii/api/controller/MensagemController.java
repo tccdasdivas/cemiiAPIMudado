@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "*")
 @RequestMapping("/mensagens")
 @RestController
 public class MensagemController {
@@ -36,6 +37,13 @@ public class MensagemController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/usuario/{usuarioId}")
+    public ResponseEntity<List<Mensagem>> buscarPorUsuario(@PathVariable Long usuarioId) {
+        List<Mensagem> mensagens = mensagemRepository.findByUsuarioMandouIdOrUsuarioRecebeuId(usuarioId, usuarioId);
+        return ResponseEntity.ok(mensagens);
+    }
+
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

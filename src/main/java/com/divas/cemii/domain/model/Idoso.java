@@ -44,6 +44,8 @@ public class Idoso {
 
     private String numero;
 
+    private String bairro;
+
     @Column(name = "nascimento", columnDefinition = "datetime")
     private LocalDate nascimento;
 
